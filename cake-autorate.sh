@@ -726,7 +726,8 @@ set_shaper_rate()
 
 	if ((adjust_shaper_rate[${direction}]))
 	then
-		tc qdisc change root dev "${interface[${direction}]}" cake bandwidth "${shaper_rate_kbps[${direction}]}Kbit" 2> /dev/null
+		local interface_queue_type=$(tc qdisc show dev ${interface[${direction}]} root | awk '{print $2}')
+		tc qdisc change root dev "${interface[${direction}]}" "$interface_queue_type" bandwidth "${shaper_rate_kbps[${direction}]}Kbit" 2> /dev/null
 	else
 		((output_cake_changes)) && log_msg "DEBUG" "adjust_${direction}_shaper_rate set to 0 in config, so skipping the corresponding tc qdisc change call."
 	fi
